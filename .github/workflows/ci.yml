@@ -4,41 +4,40 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
+  test-and-build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r app/requirements.txt
+          python -m pip install -r app/requirements-dev.txt
+
+      - name: Run pytest
+        run: |
+          PYTHONPATH=. python -m pytest tests -q
 
       - name: Python syntax check
         run: |
           python -m py_compile app/app.py
 
-      - name: Dockerfile present
-        run: |
-          test -f Dockerfile
-
       - name: Docker Compose config validation
         run: |
           docker compose -f compose.yaml config -q
 
-      - name: Docker build
+      - name: Build Docker image
         run: |
-          docker build -t cicd-lab-app:ci .
+          docker build -t cicd-lab-app:test .
