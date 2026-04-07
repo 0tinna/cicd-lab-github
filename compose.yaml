@@ -1,0 +1,7 @@
+services:
+  app:
+    image: cicd-lab-app:local
+    build:
+      context: .
+    ports:
+      - "8080:8080"
