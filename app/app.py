@@ -28,7 +28,7 @@ def healthz():
 
 @app.get('/')
 def index():
-    return jsonify(message='cicd-lab', version=VERSION)
+    return jsonify(message='cicd-lab-broken', version=VERSION)
 
 
 @app.get('/dbcheck')
